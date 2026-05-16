@@ -2,13 +2,13 @@
 
 // Motor A (Left)
 #define LEFT_EN 13
-#define LEFT_FORWARD 4
-#define LEFT_BACKWARD 2
+#define LEFT_FORWARD 2
+#define LEFT_BACKWARD 4
 
 // Motor B (Right)
 #define RIGHT_EN 5
-#define RIGHT_FORWARD 16
-#define RIGHT_BACKWARD 17
+#define RIGHT_FORWARD 17
+#define RIGHT_BACKWARD 16
 
 // PWM Configuration
 #define PWM_FREQ_LEFT 3300

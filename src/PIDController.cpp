@@ -19,15 +19,15 @@ void PID(float base_speed, float Kp, float Kd) {
     } else {
         // LOST LINE
         if (previous_error > 0) {
-            error = 40;   // belok kanan
+            error = -40;   // belok kanan
         } else {
-            error = -40;  // belok kiri
+            error = +40;  // belok kiri
         }
     }
 
 
-    right_motor_correction = base_speed + (Kp * error +  Kd * (error - previous_error));
-    left_motor_correction = base_speed - (Kp * error + Kd * (error - previous_error));
+    right_motor_correction = base_speed - (Kp * error +  Kd * (error - previous_error));
+    left_motor_correction = base_speed + (Kp * error + Kd * (error - previous_error));
 
     if(right_motor_correction > 255) right_motor_correction = MAX_MOTOR_PWM;
     if(left_motor_correction > 255) left_motor_correction = MAX_MOTOR_PWM;
