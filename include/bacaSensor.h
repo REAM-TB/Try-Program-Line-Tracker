@@ -16,6 +16,7 @@ extern int sensorWight;
 extern int bitsensor;
 extern int WeightValue[JUMLAH_SENSOR_MID];
 extern int bitWeight[JUMLAH_SENSOR_MID];
+extern String warnaSensor;
 
 void initBacaSensor();
 void bacaMid();

@@ -10,6 +10,7 @@ int sensorWight = 0;
 int bitsensor = 0;
 int WeightValue[JUMLAH_SENSOR_MID] = { 10, 20, 30, 40, 50, 60, 70, 80 };
 int bitWeight[JUMLAH_SENSOR_MID] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+String warnaSensor = "hitam";
 
 
 void initBacaSensor() {
@@ -85,10 +86,24 @@ void bacaMid() {
     sensorWight = 0;
     bitsensor = 0;
     for(int i = 0; i < JUMLAH_SENSOR_MID; i++) {
-        if (sensorADCMid[i] < treshold) {
-        sensorDigitalMid[i] = 0;
+        if (warnaSensor == "putih") {
+            if (sensorADCMid[i] < treshold) {
+                sensorDigitalMid[i] = 1;
+            } else {
+                sensorDigitalMid[i] = 0;
+            }
+        } else if (warnaSensor == "hitam") {
+            if (sensorADCMid[i] > treshold) {
+                sensorDigitalMid[i] = 1;
+            } else {
+                sensorDigitalMid[i] = 0;
+            }
         } else {
-        sensorDigitalMid[i] = 1;
+            if (sensorADCMid[i] < treshold) {
+                sensorDigitalMid[i] = 0;
+            } else {
+                sensorDigitalMid[i] = 1;
+            }
         }
         sumOnSensor += sensorDigitalMid[i];
         sensorWight += sensorDigitalMid[i] * WeightValue[i];

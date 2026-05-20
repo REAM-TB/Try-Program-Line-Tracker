@@ -10,6 +10,15 @@ float right_motor_correction, left_motor_correction;
 float derivative, previous_error;
 const int MAX_MOTOR_PWM = 255;
 
+void resetPIDState() {
+    line_position = 0.0;
+    error = 0.0;
+    right_motor_correction = 0.0;
+    left_motor_correction = 0.0;
+    derivative = 0.0;
+    previous_error = 0.0;
+}
+
 void PID(float base_speed, float Kp, float Kd) {
     bacaMid();
 
