@@ -8,7 +8,6 @@ float error = 0.0;
 float center_position = 45.0;
 float right_motor_correction, left_motor_correction;
 float derivative, previous_error;
-const int MAX_MOTOR_PWM = 255;
 
 void resetPIDState() {
     line_position = 0.0;
@@ -38,8 +37,8 @@ void PID(float base_speed, float Kp, float Kd) {
     right_motor_correction = base_speed - (Kp * error +  Kd * (error - previous_error));
     left_motor_correction = base_speed + (Kp * error + Kd * (error - previous_error));
 
-    if(right_motor_correction > 255) right_motor_correction = MAX_MOTOR_PWM;
-    if(left_motor_correction > 255) left_motor_correction = MAX_MOTOR_PWM;
+    if (right_motor_correction > maxSpeed) right_motor_correction = maxSpeed;
+    if (left_motor_correction > maxSpeed) left_motor_correction = maxSpeed;
 
     previous_error = error;
 

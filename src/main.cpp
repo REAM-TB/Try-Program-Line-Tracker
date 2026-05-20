@@ -4,10 +4,12 @@
 #include "PIDController.h"
 #include "motorControl.h"
 
-int base_speed = 140
-;
+int base_speed = 160;
+int maxSpeed = 180;
+
 float Kp = 9.0;
 float Kd = 0.8;
+
 
 bool pidEnabled = false;
 
