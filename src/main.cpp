@@ -44,15 +44,16 @@ void loop() {
   }
 
   if (pidEnabled) {
-    if (!startupDone) {
-      motorForward(base_speed, base_speed);
-      delay(1000);
-      motorStop();
-      startupDone = true;
-      resetPIDState();
-    }
+    // if (!startupDone) {
+    //   motorForward(base_speed, base_speed);
+    //   delay(1000);
+    //   motorStop();
+    //   startupDone = true;
+    //   resetPIDState();
+    // }
     PID(base_speed, Kp, Kd);
   } else {
     motorStop();
   }
+
 }
