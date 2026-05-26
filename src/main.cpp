@@ -16,6 +16,8 @@ float Kd = 0.8;
 bool pidEnabled = false;
 bool startupDone = false;
 
+extern int countStandBy;
+
 
 void setup() {
   Serial.begin(115200);
@@ -34,6 +36,7 @@ void loop() {
 
     if (pidEnabled) {
       startupDone = false;
+      countStandBy = 0;
       resetPIDState();
       Serial.println("PID ON");
     } else {

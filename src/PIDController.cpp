@@ -9,6 +9,7 @@ float center_position = 45.0;
 float right_motor_correction, left_motor_correction;
 float derivative, previous_error;
 static bool rightTurnSequenceDone = false;
+int countStandBy = 0;
 
 void resetPIDState() {
     line_position = 0.0;
@@ -30,10 +31,20 @@ void PID(float base_speed, float Kp, float Kd) {
         displaySensorMid();
 
         if (!rightTurnSequenceDone) {
+            countStandBy++;
             motorStop();
+
+            if (countStandBy >= 2) {
+                pidEnabled = false;
+                startupDone = false;
+                motorStop();
+                Serial.println("PID OFF - COUNT STANDBY 2");
+                return;
+            }
+
             delay(2000);
             setMotorSpeed(-base_speed, base_speed); // Belok kanan
-            delay(950);
+            delay(1000);
             motorStop();
             rightTurnSequenceDone = true;
         } else {
@@ -72,7 +83,6 @@ void PID(float base_speed, float Kp, float Kd) {
 
     // display sensor data
     displaySensorMid();
-    // displaySensorSide();
 
     Serial.print(String(" Weight :" + String(sensorWight)));
     Serial.print(" Error :" + String(error));

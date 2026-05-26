@@ -117,7 +117,7 @@ void bacaMid() {
         sensorWight += sensorDigitalMid[i] * WeightValue[i];
         bitsensor += sensorDigitalMid[i] * bitWeight[7-i];
 
-        Serial.print(sensorDigitalMid[i]);
+        // Serial.print(sensorDigitalMid[i]);
         // Serial.println(String(bitRead(bitsensor, 7-i)));
     }
         // Serial.print(String(" " + String(bitsensor)));
