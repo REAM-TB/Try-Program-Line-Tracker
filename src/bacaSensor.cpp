@@ -118,6 +118,11 @@ void bacaMid() {
 
 }
 
+void displaySensorMid() {
+    for (int i = 7; i >= 0; i--) {
+        Serial.print(String(bitRead(bitsensor, i)));
+    }
+}
 
 void side_callibrate(){
     bacaMid();

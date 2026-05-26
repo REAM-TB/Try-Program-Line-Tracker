@@ -45,9 +45,7 @@ void PID(float base_speed, float Kp, float Kd) {
     setMotorSpeed(left_motor_correction, right_motor_correction);
 
     // display sensor data
-    for (int i = 7; i >= 0; i--) {
-        Serial.print(String(bitRead(bitsensor, i)));
-    }
+    displaySensorMid();
 
     Serial.print(String(" Weight :" + String(sensorWight)));
     Serial.print(" Error :" + String(error));

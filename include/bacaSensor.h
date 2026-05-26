@@ -22,3 +22,4 @@ void initBacaSensor();
 void bacaMid();
 void bacaSensor();
 void side_callibrate();
+void displaySensorMid();
