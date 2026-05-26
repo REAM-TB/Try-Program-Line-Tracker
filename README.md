@@ -63,6 +63,26 @@ Catatan implementasi
 - Saat garis hilang, algoritma memberikan koreksi arah berdasarkan `previous_error` (nilai ±40) untuk mencoba menemukan kembali garis.
 - PWM menggunakan `ledc` ESP32 dengan resolusi 8-bit dan frekuensi yang didefinisikan di `include/motorControl.h`.
 
+Button Control (Toggle PID)
+- Tombol input: GPIO27 (label D27 pada board); dikonfigurasi sebagai `INPUT_PULLUP`.
+- Fungsi: tekan sekali untuk menyalakan kontrol PID, tekan lagi untuk mematikan.
+- Debounce dan logika toggle diimplementasikan pada `src/button.cpp` dan diinisialisasi dengan `initButton()`.
+- `src/main.cpp` hanya memeriksa status `pidEnabled` dan memanggil `PID()` ketika aktif.
+
+Tuning dan Variabel Utama
+- `base_speed`: kecepatan dasar robot, atur nilai di `src/main.cpp`.
+- `maxSpeed`: batas atas PWM motor (sebelumnya `MAX_MOTOR_PWM`) sekarang dideklarasikan di `src/main.cpp` untuk memudahkan tuning. Ubah nilainya di sana jika perlu.
+- `Kp` dan `Kd`: konstanta PID utama, juga di `src/main.cpp` untuk akses cepat saat tuning.
+
+Build & Run (recap)
+- Build dengan PlatformIO: `pio run`
+- Upload: `pio run -t upload`
+- Monitor serial: `pio device monitor -p <PORT> -b 115200`
+
+Catatan
+- Setelah menekan tombol untuk menghidupkan PID, status PID dicetak di serial (`PID ON` / `PID OFF`).
+- Jika ingin menambahkan fitur lain (mis. LED indikator, tombol tahan untuk reset), beri tahu saya dan saya akan bantu implementasi.
+
 Atribusi & Lisensi
 - Kode ini dibuat oleh pembuat proyek; tambahkan lisensi di file jika diperlukan.
 

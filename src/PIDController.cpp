@@ -72,6 +72,7 @@ void PID(float base_speed, float Kp, float Kd) {
 
     // display sensor data
     displaySensorMid();
+    // displaySensorSide();
 
     Serial.print(String(" Weight :" + String(sensorWight)));
     Serial.print(" Error :" + String(error));

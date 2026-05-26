@@ -3,14 +3,21 @@
 
 int sensorADC[JUMLAH_SENSOR];
 int sensorADCMid[JUMLAH_SENSOR_MID];
+int sensorADCSide[JUMLAH_SENSOR_MID];
 int sensorDigitalMid[JUMLAH_SENSOR_MID];
+int sensorDigitalSide[JUMLAH_SENSOR_MID];
 int treshold = 500;
 int sumOnSensor = 0;
+int sumOnSensorSide = 0;
 int sensorWight = 0;
+int sensorWightSide = 0;
 int bitsensor = 0;
+unsigned int bitsensorSide = 0;
 int WeightValue[JUMLAH_SENSOR_MID] = { 10, 20, 30, 40, 50, 60, 70, 80 };
 int bitWeight[JUMLAH_SENSOR_MID] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 String warnaSensor = "hitam";
+
+static const int sideSensorIndex[JUMLAH_SENSOR_MID] = { 12, 13, 14, 15, 0, 1, 2, 3 };
 
 
 void initBacaSensor() {
@@ -56,6 +63,7 @@ void bacaSensor() {
     }
     Serial.println();
 }
+
 
 void bacaSensorMid(){
     digitalWrite(SEL_A, 0); digitalWrite(SEL_B, 0);
@@ -109,8 +117,8 @@ void bacaMid() {
         sensorWight += sensorDigitalMid[i] * WeightValue[i];
         bitsensor += sensorDigitalMid[i] * bitWeight[7-i];
 
-        // Serial.print(sensorDigital[i]);
-        // Serial.print(String(bitRead(bitsensor, 7-i)));
+        Serial.print(sensorDigitalMid[i]);
+        // Serial.println(String(bitRead(bitsensor, 7-i)));
     }
         // Serial.print(String(" " + String(bitsensor)));
         // Serial.print(String(" " + String(sumOnSensor)+" " + String(sensorWight)+" " + String(bitsensor)));
@@ -124,12 +132,83 @@ void displaySensorMid() {
     }
 }
 
+
+void bacaSensorSide(){
+    digitalWrite(SEL_A, 0); digitalWrite(SEL_B, 0);
+    delayMicroseconds(10);
+    sensorADCSide[3]  = analogRead(33);
+    sensorADCSide[6] = analogRead(32);
+
+    digitalWrite(SEL_A, 1); digitalWrite(SEL_B, 0);
+    delayMicroseconds(10);
+    sensorADCSide[2]  = analogRead(33);
+    sensorADCSide[4] = analogRead(32);
+
+    digitalWrite(SEL_A, 0); digitalWrite(SEL_B, 1);
+    delayMicroseconds(10);
+    sensorADCSide[0]  = analogRead(33);
+    sensorADCSide[5] = analogRead(32);
+
+
+    digitalWrite(SEL_A, 1); digitalWrite(SEL_B, 1);
+    delayMicroseconds(10);
+    sensorADCSide[1]  = analogRead(33);
+    sensorADCSide[7] = analogRead(32);
+
+    // for (int i = 0; i < JUMLAH_SENSOR_MID; i++) {
+    //     Serial.print(String(sensorADCSide[i]) + " ");
+    // }
+    // Serial.println();
+}
+
+void bacaSide() {
+    bacaSensorSide();
+
+    sumOnSensorSide = 0;
+    sensorWightSide = 0;
+    bitsensorSide = 0;
+
+    for (int i = 0; i < JUMLAH_SENSOR_MID; i++) {
+        if (warnaSensor == "putih") {
+            if (sensorADCSide[i] < treshold) {
+                sensorDigitalSide[i] = 1;
+            } else {
+                sensorDigitalSide[i] = 0;
+            }
+        } else if (warnaSensor == "hitam") {
+            if (sensorADCSide[i] > treshold) {
+                sensorDigitalSide[i] = 1;
+            } else {
+                sensorDigitalSide[i] = 0;
+            }
+        } else {
+            if (sensorADCSide[i] < treshold) {
+                sensorDigitalSide[i] = 0;
+            } else {
+                sensorDigitalSide[i] = 1;
+            }
+        }
+
+        sumOnSensorSide += sensorDigitalSide[i];
+        sensorWightSide += sensorDigitalSide[i] * WeightValue[i];
+        bitsensorSide += sensorDigitalSide[i] * bitWeight[7-i];
+        Serial.print(sensorDigitalSide[i]);
+    }
+}
+
+void displaySensorSide() {
+    for (int i = 7; i >= 0; i--) {
+        Serial.print(String(bitRead(bitsensorSide, i)));
+    }
+}
+
+
 void side_callibrate(){
-    bacaMid();
+    bacaSide();
 
     // display sensor data
-    for (int i = 7; i >= 0; i--) {
-    Serial.print(String(bitRead(bitsensor, i)));
+    for (int i = 8; i >= 0; i--) {
+    Serial.print(String(bitRead(bitsensorSide, i)));
     Serial.print(" ");
     }
 
