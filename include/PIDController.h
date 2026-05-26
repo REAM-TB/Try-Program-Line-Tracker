@@ -7,3 +7,9 @@ extern bool startupDone;
 
 void PID(float base_speed, float Kp, float Kd);
 void resetPIDState();
+int getWaktuBalik();
+int getWaktuparkir();
+int getOrientasiParkir();
+int getKecepatanParkir();
+int getOrientasiBalik();
+int getKecepatanBalik();

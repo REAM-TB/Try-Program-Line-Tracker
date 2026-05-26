@@ -12,6 +12,12 @@ int maxSpeed = 180;
 float Kp = 9.0;
 float Kd = 0.8;
 
+int waktu_balik = 800;
+int orientasi_balik = 50;
+int kecepatan_balik = 150;
+int waktu_parkir = 600;
+int orientasi_parkir = 70;
+int kecepatan_parkir = 145;
 
 bool pidEnabled = false;
 bool startupDone = false;
@@ -59,4 +65,28 @@ void loop() {
     motorStop();
   }
   
+}
+
+int getWaktuBalik() {
+  return waktu_balik;
+}
+
+int getWaktuparkir() {
+  return waktu_parkir;
+}
+
+int getOrientasiBalik() {
+  return orientasi_balik;
+}
+
+int getOrientasiParkir() {
+  return orientasi_parkir;
+}
+
+int getKecepatanParkir() {
+  return kecepatan_parkir;
+}
+
+int getKecepatanBalik() {
+  return kecepatan_balik;
 }

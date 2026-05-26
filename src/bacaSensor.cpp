@@ -192,7 +192,8 @@ void bacaSide() {
         sumOnSensorSide += sensorDigitalSide[i];
         sensorWightSide += sensorDigitalSide[i] * WeightValue[i];
         bitsensorSide += sensorDigitalSide[i] * bitWeight[7-i];
-        Serial.print(sensorDigitalSide[i]);
+        // Serial.print(sensorDigitalSide[i]);
+        Serial.println(String(sensorDigitalSide[0]) + " " + String(sensorDigitalSide[7]));
     }
 }
 

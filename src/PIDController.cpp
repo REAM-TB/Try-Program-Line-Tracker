@@ -35,18 +35,46 @@ void PID(float base_speed, float Kp, float Kd) {
             motorStop();
 
             if (countStandBy >= 2) {
-                pidEnabled = false;
-                startupDone = false;
-                motorStop();
-                Serial.println("PID OFF - COUNT STANDBY 2");
-                return;
+                setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik()); // belok kanan
+                delay(getWaktuparkir());
+
+                while (true) {
+                    setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik()); // belok kanan
+                    bacaMid();
+
+                    if (sensorWight == getOrientasiParkir() && sensorWight != 0) { // line found'
+                        while(true) {
+                            setMotorSpeed(-getKecepatanParkir(), -getKecepatanParkir()); // mundur
+                            bacaSide(); // update sensorDigitalSide
+
+                            if (sensorDigitalSide[0] == 1 || sensorDigitalSide[7] == 1) {
+                                pidEnabled = false;
+                                startupDone = false;
+                                motorStop();
+                                Serial.println("PID OFF - COUNT STANDBY 2");
+                                Serial.println(String(sensorDigitalSide[0]) + " " + String(sensorDigitalSide[7]));
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
             delay(2000);
-            setMotorSpeed(-base_speed, base_speed); // Belok kanan
-            delay(1000);
-            motorStop();
-            rightTurnSequenceDone = true;
+            setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
+            delay(getWaktuBalik());
+            while (true) {
+                setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
+                bacaMid();
+
+                if (sensorWight = getOrientasiBalik() && sensorWight != 0 && sensorWight != 60 && sensorWight != 30 && sensorWight != 100 && sensorWight != 10) { // line found
+                    motorStop();
+                    resetPIDState();
+                    rightTurnSequenceDone = true;
+                    Serial.println("LINE FOUND - CONTINUE PID");
+                    return;
+                }
+            }
         } else {
             motorStop();
         }
