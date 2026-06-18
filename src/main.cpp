@@ -5,6 +5,8 @@
 #include "PIDController.h"
 #include "motorControl.h"
 #include "bacaSensor.h"
+#include "sensorJarak.h"
+#include "MAC_Cheker.h"
 
 int base_speed = 160;
 int maxSpeed = 180;
@@ -15,12 +17,14 @@ float Kd = 0.8;
 int waktu_balik = 800;
 int orientasi_balik = 50;
 int kecepatan_balik = 150;
+
 int waktu_parkir = 600;
 int orientasi_parkir = 70;
 int kecepatan_parkir = 145;
 
 bool pidEnabled = false;
 bool startupDone = false;
+const float jarakAmbangBatasCM = 20.0;
 
 extern int countStandBy;
 
@@ -28,7 +32,9 @@ extern int countStandBy;
 void setup() {
   Serial.begin(115200);
   inisialisasibuzzer();  
+  MAC_Cheker();
   initBacaSensor();
+  initSensorJarak();
   initMotorControl();
   initButton();
   motorStop();
@@ -52,15 +58,16 @@ void loop() {
     }
   }
 
+  
   if (pidEnabled) {
-    // if (!startupDone) {
-    //   motorForward(base_speed, base_speed);
-    //   delay(1000);
-    //   motorStop();
-    //   startupDone = true;
-    //   resetPIDState();
-    // }
-    PID(base_speed, Kp, Kd);
+    float jarakCM = bacaJarakCM();
+
+    if (jarakCM > 0) {
+      Serial.print("Distance: ");
+      Serial.print(jarakCM);
+      Serial.println(" cm");
+    }
+    // PID(base_speed, Kp, Kd);
   } else {
     motorStop();
   }
