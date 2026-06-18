@@ -7,6 +7,7 @@
 #include "bacaSensor.h"
 #include "sensorJarak.h"
 #include "MAC_Cheker.h"
+#include "communicationrxtx.h"
 
 int base_speed = 160;
 int maxSpeed = 180;
@@ -24,6 +25,7 @@ int kecepatan_parkir = 145;
 
 bool pidEnabled = false;
 bool startupDone = false;
+
 const float jarakAmbangBatasCM = 20.0;
 
 extern int countStandBy;
@@ -33,6 +35,7 @@ void setup() {
   Serial.begin(115200);
   inisialisasibuzzer();  
   MAC_Cheker();
+  initCommunicationRxTx();
   initBacaSensor();
   initSensorJarak();
   initMotorControl();
@@ -60,17 +63,19 @@ void loop() {
 
   
   if (pidEnabled) {
-    float jarakCM = bacaJarakCM();
+    // float jarakCM = bacaJarakCM();
 
-    if (jarakCM > 0) {
-      Serial.print("Distance: ");
-      Serial.print(jarakCM);
-      Serial.println(" cm");
-    }
-    // PID(base_speed, Kp, Kd);
+    // if (jarakCM > 0) {
+    //   Serial.print("Distance: ");
+    //   Serial.print(jarakCM);
+    //   Serial.println(" cm");
+    // }
+    PID(base_speed, Kp, Kd);
   } else {
     motorStop();
   }
+
+  handleCommunicationRxTx();
   
 }
 

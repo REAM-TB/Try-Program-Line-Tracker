@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include "bacaSensor.h"
+#include "sensorJarak.h"
 #include "PIDController.h"
 #include "motorControl.h"
+#include "communicationrxtx.h"
     
 float line_position = 0.0;
 float error = 0.0;
@@ -10,6 +12,7 @@ float right_motor_correction, left_motor_correction;
 float derivative, previous_error;
 static bool rightTurnSequenceDone = false;
 int countStandBy = 0;
+float jarakCM = 0.0;
 
 void resetPIDState() {
     line_position = 0.0;
@@ -21,6 +24,10 @@ void resetPIDState() {
 }
 
 void PID(float base_speed, float Kp, float Kd) {
+    float jarakTerbaca = bacaJarakCM();
+    if (jarakTerbaca > 0) {
+        jarakCM = jarakTerbaca;
+    }
     bacaMid();
 
     if (bitsensor != 0b11111111) {
@@ -32,9 +39,40 @@ void PID(float base_speed, float Kp, float Kd) {
 
         if (!rightTurnSequenceDone) {
             countStandBy++;
-            motorStop();
 
-            if (countStandBy >= 2) {
+            if (countStandBy == 1 && jarakCM > 0 && jarakCM < 9) {
+                Serial.println(" State Pickup, Jarak :" + String(jarakCM) + " cm");
+                motorStop();
+                clearReceivedSelesai();
+                sendCommunicationRxTxMessage("pickup");
+                rightTurnSequenceDone = true;
+
+                Serial.println("Menunggu balasan selesai...");
+                while (!hasReceivedSelesai()) {
+                    delay(10);
+                }
+
+                Serial.println("Balasan selesai diterima");
+                delay(2000);
+                setMotorSpeed(-getKecepatanBalik(), -getKecepatanBalik());
+                delay(1000);
+                setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
+                delay(getWaktuBalik());
+                while (true) {
+                    setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
+                    bacaMid();
+
+                    if (sensorWight == getOrientasiBalik() && sensorWight != 0 && sensorWight != 60 && sensorWight != 30 && sensorWight != 100 && sensorWight != 10) { // line found
+                        motorStop();
+                        resetPIDState();
+                        Serial.println("LINE FOUND - CONTINUE PID");
+                        return;
+                    }
+                }
+            }
+
+            else if (countStandBy >= 2) {
+                Serial.println("parkir");
                 setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik()); // belok kanan
                 delay(getWaktuparkir());
 
@@ -57,22 +95,6 @@ void PID(float base_speed, float Kp, float Kd) {
                             }
                         }
                     }
-                }
-            }
-
-            delay(2000);
-            setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
-            delay(getWaktuBalik());
-            while (true) {
-                setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
-                bacaMid();
-
-                if (sensorWight = getOrientasiBalik() && sensorWight != 0 && sensorWight != 60 && sensorWight != 30 && sensorWight != 100 && sensorWight != 10) { // line found
-                    motorStop();
-                    resetPIDState();
-                    rightTurnSequenceDone = true;
-                    Serial.println("LINE FOUND - CONTINUE PID");
-                    return;
                 }
             }
         } else {
@@ -115,6 +137,8 @@ void PID(float base_speed, float Kp, float Kd) {
     Serial.print(String(" Weight :" + String(sensorWight)));
     Serial.print(" Error :" + String(error));
     Serial.print(" Correction speed :" + String(left_motor_correction) + ", " + String(right_motor_correction));
+    Serial.print(" Jarak :" + String(jarakCM) + " cm");
     Serial.println();
+    
 
 }
