@@ -3,7 +3,10 @@
 #include "sensorJarak.h"
 #include "PIDController.h"
 #include "motorControl.h"
-#include "communicationrxtx.h"
+#include "SimpleEspNow.h"
+
+extern SimpleEspNow espNow;
+extern bool receivedFinish;
     
 float line_position = 0.0;
 float error = 0.0;
@@ -40,29 +43,40 @@ void PID(float base_speed, float Kp, float Kd) {
         if (!rightTurnSequenceDone) {
             countStandBy++;
 
-            if (countStandBy == 1 && jarakCM > 0 && jarakCM < 9) {
+            if (countStandBy == 1 && jarakCM > 0 && jarakCM < 31) {
                 Serial.println(" State Pickup, Jarak :" + String(jarakCM) + " cm");
                 motorStop();
-                clearReceivedSelesai();
-                sendCommunicationRxTxMessage("pickup");
+
+                receivedFinish = false;
+                espNow.send("go");
+
                 rightTurnSequenceDone = true;
 
-                Serial.println("Menunggu balasan selesai...");
-                while (!hasReceivedSelesai()) {
+                Serial.println("Menunggu balasan finish...");
+
+                while (!receivedFinish) {
                     delay(10);
                 }
 
-                Serial.println("Balasan selesai diterima");
+                Serial.println("Balasan finish diterima");
+
                 delay(2000);
                 setMotorSpeed(-getKecepatanBalik(), -getKecepatanBalik());
                 delay(1000);
                 setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
                 delay(getWaktuBalik());
+
                 while (true) {
                     setMotorSpeed(-getKecepatanBalik(), getKecepatanBalik());
                     bacaMid();
 
-                    if (sensorWight == getOrientasiBalik() && sensorWight != 0 && sensorWight != 60 && sensorWight != 30 && sensorWight != 100 && sensorWight != 10) { // line found
+                    if (sensorWight == getOrientasiBalik() &&
+                        sensorWight != 0 &&
+                        sensorWight != 60 &&
+                        sensorWight != 30 &&
+                        sensorWight != 100 &&
+                        sensorWight != 10) {
+
                         motorStop();
                         resetPIDState();
                         Serial.println("LINE FOUND - CONTINUE PID");
