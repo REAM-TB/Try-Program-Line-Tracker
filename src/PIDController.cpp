@@ -103,6 +103,9 @@ void PID(float base_speed, float Kp, float Kd) {
                                 pidEnabled = false;
                                 startupDone = false;
                                 motorStop();
+                                delay(500);
+                                setMotorSpeed(getKecepatanBalik(), getKecepatanBalik());
+                                delay(500);
                                 Serial.println("PID OFF - COUNT STANDBY 2");
                                 Serial.println(String(sensorDigitalSide[0]) + " " + String(sensorDigitalSide[7]));
                                 return;
